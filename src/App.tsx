@@ -1,26 +1,25 @@
-import React from 'react';
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
+import sounds from './sounds.json';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const [ random, setRandom ] = useState(Math.floor(Math.random() * sounds.length));
+
+	let audio = new Audio(`/DAVAsound/${sounds[random]}`);
+	console.log(sounds[random], random, sounds.length);
+
+	const start = () => {
+		setRandom(Math.floor(Math.random() * sounds.length));
+		audio.play();
+	};
+
+	return (
+		<div className="app" onClick={start}>
+			{/* <button className="btn" onClick={start}>
+				DAVA
+			</button> */}
+		</div>
+	);
 }
 
 export default App;
