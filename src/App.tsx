@@ -47,7 +47,7 @@ function App() {
 				});
 			};
 		},
-		[ indexPlaying ]
+		[ indexPlaying, audios ]
 	);
 
 	return (
@@ -60,8 +60,8 @@ function App() {
 				{audios.map((audio, index) => {
 					return (
 						<button className="btn" onClick={() => start(index)} key={index}>
-							{audio.audio.paused ? <i className="fa fa-play" /> : <i className="fa fa-stop" />}
 							{index}
+							{audio.audio.paused ? <i className="fa fa-play" /> : <i className="fa fa-stop" />}
 						</button>
 					);
 				})}

@@ -11,6 +11,10 @@
 	/* background: linear-gradient(145deg, #5bc6ff, #4da7db); */
 }
 
+i {
+	margin-left: 4px;
+}
+
 .btn-container {
 	/* width: 100%;
 	display: flex; */
