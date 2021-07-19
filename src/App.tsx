@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import sounds from './sounds.json';
-import Player from './Player';
 
 function App() {
 	const [ random, setRandom ] = useState(Math.floor(Math.random() * sounds.length));
