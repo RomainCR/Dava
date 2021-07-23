@@ -25,6 +25,10 @@ function App() {
 		}
 	};
 
+	const onClick = () => {
+		console.log('click is triggered');
+	};
+
 	useEffect(() => {
 		if (localStorage.getItem('favoris')) {
 			const f = localStorage.getItem('favoris');
@@ -36,7 +40,7 @@ function App() {
 		shouldPreventDefault: true,
 		delay: 500
 	};
-	const longPressEvent = useLongPress(onLongPress, defaultOptions);
+	const longPressEvent = useLongPress(onLongPress, onClick, defaultOptions);
 
 	const start = (index: number) => {
 		setRandom(Math.floor(Math.random() * sounds.length));
@@ -88,10 +92,10 @@ function App() {
 					return (
 						<button
 							className={favs.includes(index) ? 'btn-fav' : 'btn'}
-							{...longPressEvent}
+							// {...longPressEvent}
 							onClick={() => {
 								start(index);
-								setIndexFav(index);
+								// setIndexFav(index);
 							}}
 							key={index}>
 							{index}
