@@ -1,46 +1,47 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import Holdable from './Holdable';
 import sounds from './sounds.json';
-// import useLongPress from './useLongPress';
 
 function App() {
 	const [ random, setRandom ] = useState(Math.floor(Math.random() * sounds.length));
-	// const [ randomAudio, setRandomAudio ] = useState<HTMLAudioElement>(new Audio(`/DAVAsound/${sounds[random]}`));
-	const [ indexPlaying, setIndexPlaying ] = useState<number>(0);
-	// const [ indexFav, setIndexFav ] = useState<number>(0);
-	// const [ favs, setFavs ] = useState<any[]>([]);
+	const [ indexPlaying, setIndexPlaying ] = useState<number>();
+	const [ favs, setFavs ] = useState<any[]>([]);
+	const [ isFavsOnly, setIsFavsOnly ] = useState(false);
 	const [ audios, setAudios ] = useState(
 		sounds.map((sound) => {
 			return { audio: new Audio(`/DAVAsound/${sound}`), isPlaying: false };
 		})
 	);
-	// const onLongPress = () => {
-	// 	if (!favs.includes(indexFav)) {
-	// 		setFavs([ indexFav, ...favs ]);
-	// 		localStorage.setItem('favoris', JSON.stringify(favs));
-	// 	} else {
-	// 		const newFavs = favs.filter((x) => x !== indexFav);
-	// 		setFavs(newFavs);
-	// 		localStorage.setItem('favoris', JSON.stringify(favs));
-	// 	}
-	// };
 
-	// const onClick = () => {
-	// 	console.log('click is triggered');
-	// };
+	useEffect(() => {
+		if (localStorage.getItem('favoris')) {
+			const f = localStorage.getItem('favoris');
+			setFavs(JSON.parse(f as string));
+		} else {
+			localStorage.setItem('favoris', JSON.stringify([]));
+		}
+	}, []);
 
-	// useEffect(() => {
-	// 	if (localStorage.getItem('favoris')) {
-	// 		const f = localStorage.getItem('favoris');
-	// 		setFavs(JSON.parse(f as string));
-	// 	}
-	// }, []);
+	const clearFavs = () => {
+		localStorage.setItem('favoris', JSON.stringify([]));
+		setFavs([])
+	}
+	
 
-	// const defaultOptions = {
-	// 	shouldPreventDefault: true,
-	// 	delay: 500
-	// };
-	// const longPressEvent = useLongPress(onLongPress, onClick, defaultOptions);
+	const showFavs = () => {
+		if (!isFavsOnly) {
+			const favsAudios = sounds.filter((a, index) => favs?.includes(index))		
+			setAudios(	favsAudios.map((sound) => {
+				return { audio: new Audio(`/DAVAsound/${sound}`), isPlaying: false };
+			}))
+		} else {
+			setAudios(	sounds.map((sound) => {
+				return { audio: new Audio(`/DAVAsound/${sound}`), isPlaying: false };
+			}))
+		}
+		setIsFavsOnly(!isFavsOnly)
+	}
 
 	const start = (index: number) => {
 		setRandom(Math.floor(Math.random() * sounds.length));
@@ -64,42 +65,66 @@ function App() {
 
 	useEffect(
 		() => {
-			audios[indexPlaying].audio.addEventListener('ended', () => {
-				const newAudios = [ ...audios ];
-				newAudios[indexPlaying].isPlaying = false;
-				setAudios(newAudios);
-			});
-			return () => {
-				audios[indexPlaying].audio.removeEventListener('ended', () => {
+			if (indexPlaying) {
+				audios[indexPlaying].audio.addEventListener('ended', () => {
 					const newAudios = [ ...audios ];
 					newAudios[indexPlaying].isPlaying = false;
 					setAudios(newAudios);
 				});
+			}
+			return () => {
+				if (indexPlaying) {
+					audios[indexPlaying].audio.removeEventListener('ended', () => {
+						const newAudios = [ ...audios ];
+						newAudios[indexPlaying].isPlaying = false;
+						setAudios(newAudios);
+					});
+				}
 			};
 		},
 		[ indexPlaying, audios ]
 	);
 
+	function onHold(id: number) {
+		const f = localStorage.getItem('favoris');
+		const localFav = JSON.parse(f as string);
+		if (!localFav) {
+			localStorage.setItem('favoris', JSON.stringify([ id ]));
+		}
+		if (localFav && !localFav?.includes(id)) {
+			const newFavs = [...localFav, id]			
+			localStorage.setItem('favoris', JSON.stringify(newFavs));
+			setFavs(newFavs)
+		} else {
+			const newFavs = localFav?.filter((x: number) => x !== id);
+			localStorage.setItem('favoris', JSON.stringify(newFavs));
+			setFavs(newFavs)
+		}
+	}
+
 	return (
 		<div className="app">
 			<h2>DAVA soundboard</h2>
-			<button className="btn-random" onClick={() => start(random)}>
-				RANDOM
-			</button>
+			<div className="first-buttons-container">
+				<button className={isFavsOnly ?"btn-fav": "btn"} onClick={() => showFavs()}>
+					Favs
+				</button>
+				<button className="btn-random" onClick={() => start(random)}>
+					RANDOM
+				</button>
+				<button className="btn" onClick={() => clearFavs()}>
+					Clear favs
+				</button>
+			</div>
 			<div className="btn-container">
 				{audios.map((audio, index) => {
 					return (
-						<button
-							className={'btn'}
-							// {...longPressEvent}
-							onClick={() => {
-								start(index);
-								// setIndexFav(index);
-							}}
-							key={index}>
-							{index}
-							{audio.audio.paused ? <i className="fa fa-play" /> : <i className="fa fa-stop" />}
-						</button>
+						<Holdable onClick={() => start(index)} onHold={() => onHold(index)} id={index} key={index}>
+							<button className={favs.includes(index) ? 'btn-fav':'btn'}>
+								{index + 1}
+								{audio.audio.paused ? <i className="fa fa-play" /> : <i className="fa fa-stop" />}
+							</button>
+						</Holdable>
 					);
 				})}
 			</div>
