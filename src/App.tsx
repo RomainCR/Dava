@@ -66,7 +66,7 @@ function App() {
 	useEffect(
 		() => {
 			if (indexPlaying) {
-				audios[indexPlaying].audio.addEventListener('ended', () => {
+				audios[indexPlaying]?.audio.addEventListener('ended', () => {
 					const newAudios = [ ...audios ];
 					newAudios[indexPlaying].isPlaying = false;
 					setAudios(newAudios);
@@ -74,7 +74,7 @@ function App() {
 			}
 			return () => {
 				if (indexPlaying) {
-					audios[indexPlaying].audio.removeEventListener('ended', () => {
+					audios[indexPlaying]?.audio.removeEventListener('ended', () => {
 						const newAudios = [ ...audios ];
 						newAudios[indexPlaying].isPlaying = false;
 						setAudios(newAudios);
