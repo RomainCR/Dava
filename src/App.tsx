@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import Holdable from './Holdable';
 import sounds from './sounds.json';
-import useLongPress from './useLongPress';
 
 function App() {
 	const [ random, setRandom ] = useState(Math.floor(Math.random() * sounds.length));
@@ -14,7 +13,6 @@ function App() {
 			return { audio: new Audio(`/DAVAsound/${sound}`), isPlaying: false };
 		})
 	);
-	console.log("Ausui", audios);	
 
 	useEffect(() => {
 		if (localStorage.getItem('favoris')) {
@@ -29,13 +27,19 @@ function App() {
 		localStorage.setItem('favoris', JSON.stringify([]));
 		setFavs([])
 	}
+	
 
 	const showFavs = () => {
-		// reset audio on click  
-		const favsAudios = sounds.filter((a, index) => favs?.includes(index))		
-		setAudios(	favsAudios.map((sound) => {
-			return { audio: new Audio(`/DAVAsound/${sound}`), isPlaying: false };
-		}))
+		if (!isFavsOnly) {
+			const favsAudios = sounds.filter((a, index) => favs?.includes(index))		
+			setAudios(	favsAudios.map((sound) => {
+				return { audio: new Audio(`/DAVAsound/${sound}`), isPlaying: false };
+			}))
+		} else {
+			setAudios(	sounds.map((sound) => {
+				return { audio: new Audio(`/DAVAsound/${sound}`), isPlaying: false };
+			}))
+		}
 		setIsFavsOnly(!isFavsOnly)
 	}
 
@@ -78,7 +82,7 @@ function App() {
 				}
 			};
 		},
-		[ indexPlaying, audios, isFavsOnly ]
+		[ indexPlaying, audios ]
 	);
 
 	function onHold(id: number) {
@@ -117,7 +121,7 @@ function App() {
 					return (
 						<Holdable onClick={() => start(index)} onHold={() => onHold(index)} id={index} key={index}>
 							<button className={favs.includes(index) ? 'btn-fav':'btn'}>
-								{index}
+								{index + 1}
 								{audio.audio.paused ? <i className="fa fa-play" /> : <i className="fa fa-stop" />}
 							</button>
 						</Holdable>
