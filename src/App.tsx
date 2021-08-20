@@ -103,32 +103,37 @@ function App() {
 	}
 
 	return (
-		<div className="app">
-			<h2>DAVA soundboard</h2>
-			<div className="first-buttons-container">
-				<button className={isFavsOnly ?"btn-fav": "btn"} onClick={() => showFavs()}>
-					Favs
-				</button>
-				<button className="btn-random" onClick={() => start(random)}>
-					RANDOM
-				</button>
-				<button className="btn" onClick={() => clearFavs()}>
-					Clear favs
-				</button>
-			</div>
-			<div className="btn-container">
-				{audios.map((audio, index) => {
-					return (
-						<Holdable onClick={() => start(index)} onHold={() => onHold(index)} id={index} key={index}>
-							<button className={favs.includes(index) ? 'btn-fav':'btn'}>
-								{index + 1}
-								{audio.audio.paused ? <i className="fa fa-play" /> : <i className="fa fa-stop" />}
-							</button>
-						</Holdable>
-					);
-				})}
-			</div>
+		<>
+		<div className="bg">
 		</div>
+		<div className="app">
+				<h2>DAVA soundboard</h2>
+				<div className="first-buttons-container">
+					<button className={isFavsOnly ?"btn-fav": "btn"} onClick={() => showFavs()}>
+						Favs
+					</button>
+					<button className="btn-random" onClick={() => start(random)}>
+						RANDOM
+					</button>
+					<button className="btn" onClick={() => clearFavs()}>
+						Clear favs
+					</button>
+				</div>
+				<div className="btn-container">
+					{audios.map((audio, index) => {
+						return (
+							<Holdable onClick={() => start(index)} onHold={() => onHold(index)} id={index} key={index}>
+								<button className={favs.includes(index) ? 'btn-fav':'btn'}>
+									{index + 1}
+									{audio.audio.paused ? <i className="fa fa-play" /> : <i className="fa fa-stop" />}
+								</button>
+							</Holdable>
+						);
+					})}
+				</div>
+			</div>
+
+			</>
 	);
 }
 
