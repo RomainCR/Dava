@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import Holdable from './Holdable';
-import sounds from './sounds.json';
+import soundsFormated from './soundsFormated.json';
 
 function App() {
-	const [ random, setRandom ] = useState(Math.floor(Math.random() * sounds.length));
+	const [ random, setRandom ] = useState(Math.floor(Math.random() * soundsFormated.length));
 	const [ indexPlaying, setIndexPlaying ] = useState<number>();
 	const [ favs, setFavs ] = useState<any[]>([]);
 	const [ isFavsOnly, setIsFavsOnly ] = useState(false);
+
 	const [ audios, setAudios ] = useState(
-		sounds.map((sound) => {
-			return { audio: new Audio(`/DAVAsound/${sound}`), isPlaying: false };
+		soundsFormated.map((sound) => {
+			return { audio: new Audio(`/DAVAsound/${sound.name}`), isPlaying: false, id: sound.id };
 		})
 	);
 
@@ -31,20 +32,20 @@ function App() {
 
 	const showFavs = () => {
 		if (!isFavsOnly) {
-			const favsAudios = sounds.filter((a, index) => favs?.includes(index))		
+			const favsAudios = soundsFormated.filter((a, index) => favs?.includes(a.id))		
 			setAudios(	favsAudios.map((sound) => {
-				return { audio: new Audio(`/DAVAsound/${sound}`), isPlaying: false };
+				return { audio: new Audio(`/DAVAsound/${sound.name}`), isPlaying: false, id: sound.id };
 			}))
 		} else {
-			setAudios(	sounds.map((sound) => {
-				return { audio: new Audio(`/DAVAsound/${sound}`), isPlaying: false };
+			setAudios(	soundsFormated.map((sound) => {
+				return { audio: new Audio(`/DAVAsound/${sound.name}`), isPlaying: false, id: sound.id };
 			}))
 		}
 		setIsFavsOnly(!isFavsOnly)
 	}
 
 	const start = (index: number) => {
-		setRandom(Math.floor(Math.random() * sounds.length));
+		setRandom(Math.floor(Math.random() * soundsFormated.length));
 		if (!audios[index].audio.paused) {
 			const newAudios = [ ...audios ];
 			newAudios[index].audio.pause();
@@ -101,6 +102,14 @@ function App() {
 			setFavs(newFavs)
 		}
 	}
+useEffect(() => {
+	if (isFavsOnly) {
+		const favsAudios = soundsFormated.filter(a => favs?.includes(a.id))		
+		setAudios(	favsAudios.map((sound) => {
+			return { audio: new Audio(`/DAVAsound/${sound.name}`), isPlaying: false, id: sound.id };
+		}))
+	} 
+}, [favs, isFavsOnly])
 
 	return (
 		<>
@@ -112,7 +121,7 @@ function App() {
 					<button className={isFavsOnly ?"btn-fav": "btn"} onClick={() => showFavs()}>
 						Favs
 					</button>
-					<button className="btn-random" onClick={() => start(random)}>
+					<button className="btn" onClick={() => start(random)}>
 						RANDOM
 					</button>
 					<button className="btn" onClick={() => clearFavs()}>
@@ -122,9 +131,9 @@ function App() {
 				<div className="btn-container">
 					{audios.map((audio, index) => {
 						return (
-							<Holdable onClick={() => start(index)} onHold={() => onHold(index)} id={index} key={index}>
-								<button className={favs.includes(index) ? 'btn-fav':'btn'}>
-									{index + 1}
+							<Holdable onClick={() => start(index)} onHold={() => onHold(audio.id)} id={index} key={index}>
+								<button className={favs.includes(audio.id) ? 'btn-fav':'btn'}>
+									{audio.id + 1}
 									{audio.audio.paused ? <i className="fa fa-play" /> : <i className="fa fa-stop" />}
 								</button>
 							</Holdable>
