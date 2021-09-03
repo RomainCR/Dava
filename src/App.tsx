@@ -124,9 +124,12 @@ useEffect(() => {
 					<button className="btn" onClick={() => start(random)}>
 						RANDOM
 					</button>
-					<button className="btn" onClick={() => clearFavs()}>
+					<Holdable onHold={() => clearFavs()} onClick={isFavsOnly ? () => console.log("C'est vraiment un site de merde") :
+					() => start(100)} id={100}>
+					<button className="btn">
 						Clear favs
 					</button>
+					</Holdable>
 				</div>
 				<div className="btn-container">
 					{audios.map((audio, index) => {
