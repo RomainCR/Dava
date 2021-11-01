@@ -119,7 +119,7 @@ useEffect(() => {
 				<h2>DAVA soundboard</h2>
 				<div className="first-buttons-container">
 					<button className={isFavsOnly ?"btn-fav": "btn"} onClick={() => showFavs()}>
-						Favs
+						Favoris
 					</button>
 					<button className="btn" onClick={() => start(random)}>
 						RANDOM
@@ -127,7 +127,7 @@ useEffect(() => {
 					<Holdable onHold={() => clearFavs()} onClick={isFavsOnly ? () => console.log("C'est vraiment un site de merde") :
 					() => start(100)} id={100}>
 					<button className="btn">
-						Clear favs
+						Clear favoris
 					</button>
 					</Holdable>
 				</div>
