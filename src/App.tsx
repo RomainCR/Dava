@@ -134,7 +134,6 @@ function App() {
   }, [favs, isFavsOnly]);
 
   const rd = Math.floor(Math.random() * 10) > 6 ? 127 : 100;
-  console.log("🚀 ~ file: App.tsx:137 ~ App ~ rd:", rd, isFavsOnly);
 
   return (
     <>
