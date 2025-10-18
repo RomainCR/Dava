@@ -10,6 +10,7 @@ function App() {
   const [indexPlaying, setIndexPlaying] = useState<number>();
   const [favs, setFavs] = useState<any[]>([]);
   const [isFavsOnly, setIsFavsOnly] = useState(false);
+  const [displayName, setDisplayName] = useState(false);
 
   const [audios, setAudios] = useState(
     soundsFormated.map((sound) => {
@@ -17,6 +18,7 @@ function App() {
         audio: new Audio(`/DAVAsound/${sound.name}`),
         isPlaying: false,
         id: sound.id,
+        name: sound.name,
       };
     })
   );
@@ -46,6 +48,7 @@ function App() {
             audio: new Audio(`/DAVAsound/${sound.name}`),
             isPlaying: false,
             id: sound.id,
+            name: sound.name,
           };
         })
       );
@@ -56,6 +59,7 @@ function App() {
             audio: new Audio(`/DAVAsound/${sound.name}`),
             isPlaying: false,
             id: sound.id,
+            name: sound.name,
           };
         })
       );
@@ -127,6 +131,7 @@ function App() {
             audio: new Audio(`/DAVAsound/${sound.name}`),
             isPlaying: false,
             id: sound.id,
+            name: sound.name,
           };
         })
       );
@@ -146,9 +151,12 @@ function App() {
             onClick={() => showFavs()}>
             Favs
           </button>
-          <button className="btn" onClick={() => start(random)}>
-            RANDOM
-          </button>
+          <Holdable
+            onHold={() => setDisplayName(!displayName)}
+            onClick={() => start(random)}
+            id={rd}>
+            <button className="btn">RANDOM</button>
+          </Holdable>
           <Holdable
             onHold={() => clearFavs()}
             onClick={
@@ -172,7 +180,9 @@ function App() {
                   key={index}>
                   <button
                     className={favs.includes(audio.id) ? "btn-fav" : "btn"}>
-                    {audio.id + 1}
+                    {displayName
+                      ? audio.name.replace(/_/g, " ").replace(".mp3", "")
+                      : audio.id + 1}
                     {audio.audio.paused ? (
                       <i className="fa fa-play" />
                     ) : (
